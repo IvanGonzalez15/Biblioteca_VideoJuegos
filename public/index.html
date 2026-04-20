@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Videojuegos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="pagina">
+    <canvas id="xmb"></canvas>
+
+    <div class="app-shell">
+        <header class="topbar panel">
+            <div class="brand-block">
+                <h1>Tu catalogo de videojuegos</h1>
+            </div>
+
+            <form class="searchbar" role="search">
+                <label class="sr-only" for="buscador">Buscar un videojuego</label>
+                <input type="search" id="buscador" name="buscador" placeholder="Buscar por titulo, genero o plataforma"
+                    autocomplete="off">
+                <button type="button" id="btn-buscar">Buscar</button>
+            </form>
+        </header>
+
+        <div class="layout-principal">
+            <aside class="sidebar panel">
+                <p class="sidebar-title">Categorias</p>
+                <nav aria-label="Filtros del catalogo">
+                    <ul class="sidebar-list">
+                        <li><button class="btn-filtro active" data-cat="todos" type="button">Todos</button></li>
+                        <li><button class="btn-filtro" data-cat="accion" type="button">Accion</button></li>
+                        <li><button class="btn-filtro" data-cat="aventura" type="button">Aventura</button></li>
+                        <li><button class="btn-filtro" data-cat="rpg" type="button">RPG</button></li>
+                        <li><button class="btn-filtro" data-cat="indie" type="button">Indie</button></li>
+                        <li><button class="btn-filtro" data-cat="estrategia" type="button">Estrategia</button></li>
+                        <li><button class="btn-filtro" data-cat="multijugador" type="button">Multijugador</button></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="contenido-catalogo">
+                <section class="catalogo-panel panel">
+                    <div class="catalogo-header">
+                        <div>
+                            <p class="eyebrow">Catalogo</p>
+                            <h2>Todos los juegos</h2>
+                        </div>
+
+                        <div class="catalogo-tools">
+                            <label for="orden-juegos">Ordenar por</label>
+                            <div class="select-wrap">
+                                <select id="orden-juegos" name="orden-juegos">
+                                    <option value="nombre">Nombre</option>
+                                    <option value="fecha">Fecha de lanzamiento</option>
+                                    <option value="nota">Nota</option>
+                                    <option value="popularidad">Popularidad</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="catalogo-grid">
+                        <div class="catalogo-grid-head">
+                            <h3>Listado</h3>
+                            <p>Este espacio lo rellenara despues <code>script.js</code> con las cartas.</p>
+                        </div>
+
+                        <div id="contenedor-juegos" class="grid-juegos" aria-live="polite">
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para ver como quedaria un juego dentro del catalogo.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para comprobar el comportamiento del catalogo al hacer scroll.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para comprobar el comportamiento del catalogo al hacer scroll.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para comprobar el comportamiento del catalogo al hacer scroll.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para comprobar el comportamiento del catalogo al hacer scroll.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+
+                            <article class="game-card">
+                                <a class="game-card-link" href="juego.html">
+                                    <div class="game-card-media">
+                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
+                                        <span class="game-card-badge">Demo</span>
+                                    </div>
+
+                                    <div class="game-card-body">
+                                        <div class="game-card-head">
+                                            <h4>Ghost of Tsushima</h4>
+                                            <span class="game-card-score">83</span>
+                                        </div>
+
+                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-text">Carta de prueba para comprobar el comportamiento del catalogo al hacer scroll.</p>
+
+                                        <div class="game-card-tags">
+                                            <span>PS4</span>
+                                            <span>Open world</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="fondo.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -23,6 +23,32 @@
                     autocomplete="off">
                 <button type="button" id="btn-buscar">Buscar</button>
             </form>
+
+            <div class="topbar-auth">
+                <details class="login-dropdown">
+                    <summary class="login-toggle">Entrar</summary>
+
+                    <div class="login-panel">
+                        <form id="login-form" class="login-form" autocomplete="on">
+                            <label class="sr-only" for="usuario">Usuario</label>
+                            <input type="text" id="usuario" name="usuario" class="login-input" placeholder="Usuario" required>
+
+                            <label class="sr-only" for="password">Contrasena</label>
+                            <input type="password" id="password" name="password" class="login-input" placeholder="Contrasena" required>
+
+                            <button type="submit" class="login-submit">Iniciar sesion</button>
+                        </form>
+
+                        <div class="login-status">
+                            <p id="login-msg" class="login-msg" aria-live="polite"></p>
+
+                            <div id="zona-privada" class="oculto">
+                                <button id="btn-admin" type="button" class="login-pill">Anadir juego</button>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
         </header>
 
         <div class="layout-principal">
@@ -65,29 +91,25 @@
                     <div class="catalogo-grid">
                         <div class="catalogo-grid-head">
                             <h3>Listado</h3>
-                            <p>Este espacio lo rellenara despues <code>script.js</code> con las cartas.</p>
                         </div>
 
                         <div id="contenedor-juegos" class="grid-juegos" aria-live="polite">
                             <article class="game-card">
-                                <a class="game-card-link" href="juego.html">
+                                <a class="game-card-link" href="juego.html?id=1">
                                     <div class="game-card-media">
                                         <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
-                                        <span class="game-card-badge">Demo</span>
                                     </div>
 
                                     <div class="game-card-body">
                                         <div class="game-card-head">
                                             <h4>Ghost of Tsushima</h4>
-                                            <span class="game-card-score">83</span>
                                         </div>
 
-                                        <p class="game-card-meta">Accion · Aventura · 2020</p>
+                                        <p class="game-card-meta">Accion/Aventura</p>
                                         <p class="game-card-text">Carta de prueba para ver como quedaria un juego dentro del catalogo.</p>
 
                                         <div class="game-card-tags">
                                             <span>PS4</span>
-                                            <span>Open world</span>
                                         </div>
                                     </div>
                                 </a>

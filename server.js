@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -49,7 +50,7 @@ app.get('/api/juegos/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const result = await pool.query();
+        const result = await pool.query(``);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Juego no encontrado' });
@@ -65,7 +66,7 @@ app.get('/api/juegos/genero/:nombre', async (req, res) => {
     const { nombre } = req.params;
 
     try {
-        const result = await pool.query(`#AQUI SELECT O LO QUE SEA NOSE`);
+        const result = await pool.query(`#`);
         res.json(result.rows);
     } catch (err) {
         console.error('Error en /api/juegos/genero:', err.message);
@@ -86,7 +87,7 @@ app.get('/api/buscar', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error('Error en /api/buscar', err.message);
-        res.status(500).json({ error: 'Erroe en la busqueda' });
+        res.status(500).json({ error: 'Error en la busqueda' });
     }
 });
 
@@ -99,6 +100,10 @@ app.post('/api/login', (req, res) => {
         res.status(401).json({ admin: false, error: 'Contraseña incorrecta' });
     }
 });
+
+app.post('/api/insert', async (req, res) => {
+
+})
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto:${PORT}`);

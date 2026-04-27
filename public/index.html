@@ -21,7 +21,6 @@
                 <label class="sr-only" for="buscador">Buscar un videojuego</label>
                 <input type="search" id="buscador" name="buscador" placeholder="Buscar por titulo, genero o plataforma"
                     autocomplete="off">
-                <button type="button" id="btn-buscar">Buscar</button>
             </form>
 
             <div class="topbar-auth">
@@ -63,6 +62,7 @@
                         <li><button class="btn-filtro" data-cat="indie" type="button">Indie</button></li>
                         <li><button class="btn-filtro" data-cat="estrategia" type="button">Estrategia</button></li>
                         <li><button class="btn-filtro" data-cat="multijugador" type="button">Multijugador</button></li>
+                        <li><button class="btn-filtro" data-cat="mundoAbierto" type="button">Mundo abierto</button></li>
                     </ul>
                 </nav>
             </aside>
@@ -81,8 +81,6 @@
                                 <select id="orden-juegos" name="orden-juegos">
                                     <option value="nombre">Nombre</option>
                                     <option value="fecha">Fecha de lanzamiento</option>
-                                    <option value="nota">Nota</option>
-                                    <option value="popularidad">Popularidad</option>
                                 </select>
                             </div>
                         </div>
@@ -94,26 +92,6 @@
                         </div>
 
                         <div id="contenedor-juegos" class="grid-juegos" aria-live="polite">
-                            <article class="game-card">
-                                <a class="game-card-link" href="juego.html?id=1">
-                                    <div class="game-card-media">
-                                        <img src="https://media.rawg.io/media/resize/640/-/games/193/193c9fe23ca026914fdf41d551ff3df9.jpg" alt="ghost of tsushima">
-                                    </div>
-
-                                    <div class="game-card-body">
-                                        <div class="game-card-head">
-                                            <h4>Ghost of Tsushima</h4>
-                                        </div>
-
-                                        <p class="game-card-meta">Accion/Aventura</p>
-                                        <p class="game-card-text">Carta de prueba para ver como quedaria un juego dentro del catalogo.</p>
-
-                                        <div class="game-card-tags">
-                                            <span>PS4</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </article>
                         </div>
                     </div>
                 </section>

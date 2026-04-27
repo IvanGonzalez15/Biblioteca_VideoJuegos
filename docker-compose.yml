@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    container_name: prueba2_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      db: 
+        condition: service_healthy
+    restart: unless-stopped
+
+  db: 
+    image: postgres:17-alpine
+    container_name: prueba2_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: bibliojuegos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

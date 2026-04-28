@@ -14,167 +14,172 @@ const pool = new Pool({
     database: process.env.DB_NAME,
 });
 
-pool.connect((err, client, release) => {
-    if (err) {
-        console.error('Error conectando a PostgreSQL:', err.message);
-    } else {
-        console.log('Conectado a PostgreSQL correctamente');
-        release();
-    }
-});
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-async function cargarDatosBase() {
-    const [juegosResult, generosResult, developersResult] = await Promise.all([
-        pool.query('SELECT * FROM public.getvideogames();'),
-        pool.query('SELECT * FROM public.getgenres();'),
-        pool.query('SELECT * FROM public.getdevelopers();'),
-    ]);
+// Ver todos los juegos
+app.get('/api/juegos', async (req, res) => {
+    const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
 
-    return {
-        juegos: juegosResult.rows,
-        generos: generosResult.rows,
-        developers: developersResult.rows,
-    };
-}
+    const orden = req.query.orden;
+    const juegos = result.rows;
 
-function enriquecerJuego(juego, generos, developers) {
-    const genero = generos.find((item) => item.id === juego.genre_id);
-    const developer = developers.find((item) => item.id === juego.developer_id);
+    if (orden === 'fecha') {
+        for (let i = 0; i < juegos.length; i++) {
+            for (let j = i + 1; j < juegos.length; j++) {
+                const fechaI = new Date(juegos[i].release_date);
+                const fechaJ = new Date(juegos[j].release_date);
+                if (fechaJ > fechaI) {
+                    const temp = juegos[i];
+                    juegos[i] = juegos[j];
+                    juegos[j] = temp;
+                }
+            }
+        }
+    } else {
+        for (let i = 0; i < juegos.length; i++) {
+            for (let j = i + 1; j < juegos.length; j++) {
+                if (juegos[j].name < juegos[i].name) {
+                    const temp = juegos[i];
+                    juegos[i] = juegos[j];
+                    juegos[j] = temp;
+                }
+            }
+        }
+    }
 
-    return {
+    res.json(juegos);
+});
+
+// Filtrar por género
+app.get('/api/juegos/genero/:nombre', async (req, res) => {
+    const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
+    const juegos = [];
+
+    for (let i = 0; i < result.rows.length; i++) {
+        if (result.rows[i].genre.toLowerCase() === req.params.nombre.toLowerCase()) {
+            juegos.push(result.rows[i]);
+        }
+    }
+    res.json(juegos);
+});
+
+// Ver un juego por su ID
+app.get('/api/juegos/:id', async (req, res) => {
+    const id = Number(req.params.id);
+
+    const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
+
+    let juego = null;
+    for (let i = 0; i < result.rows.length; i++) {
+        if (result.rows[i].id === id) {
+            juego = result.rows[i];
+            break;
+        }
+    }
+
+    if (!juego) return res.status(404).json({ error: 'No encontrado' });
+
+    // Convertir release_date a string si es un objeto
+    let fechaStr = '';
+    if (juego.release_date) {
+        if (typeof juego.release_date === 'string') {
+            fechaStr = juego.release_date;
+        } else {
+            fechaStr = juego.release_date.toISOString().split('T')[0];
+        }
+    }
+
+    let año = '';
+    if (fechaStr) {
+        año = fechaStr.split('-')[0];
+    }
+
+    res.json({
         id: juego.id,
         name: juego.name,
         description: juego.description,
-        genre: genero?.name || '',
-        developer: developer?.name || '',
-        image: juego.image || '',
-        platform: '',
-        release_date: juego.release_date,
-    };
-}
-
-function ordenarJuegos(juegos, orden = 'nombre') {
-    return [...juegos].sort((a, b) =>
-        orden === 'fecha'
-            ? new Date(b.release_date) - new Date(a.release_date)
-            : a.name.localeCompare(b.name)
-    );
-}
-
-app.get('/api/juegos', async (req, res) => {
-    const { orden = 'nombre' } = req.query;
-
-    try {
-        const { juegos, generos, developers } = await cargarDatosBase();
-        const resultado = juegos.map((juego) => enriquecerJuego(juego, generos, developers));
-
-        res.json(ordenarJuegos(resultado, orden));
-    } catch (err) {
-        console.error('Error en /api/juegos:', err.message);
-        res.status(500).json({ error: 'Error al obtener los juegos' });
-    }
+        genero: juego.genre,
+        desarrolladora: juego.developer,
+        image: juego.image,
+        plataforma: '',
+        fecha: fechaStr,
+        año: año,
+    });
 });
 
-app.get('/api/juegos/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const { juegos, generos, developers } = await cargarDatosBase();
-        const juego = juegos.find((item) => item.id === Number(id));
-
-        if (!juego) {
-            return res.status(404).json({ error: 'Juego no encontrado' });
-        }
-
-        const genero = generos.find((item) => item.id === juego.genre_id);
-        const developer = developers.find((item) => item.id === juego.developer_id);
-        const juegoBase = enriquecerJuego(juego, generos, developers);
-
-        res.json({
-            id: juegoBase.id,
-            name: juegoBase.name,
-            description: juegoBase.description,
-            genero: genero?.name || '',
-            desarrolladora: developer?.name || '',
-            image: juegoBase.image,
-            plataforma: '',
-            fecha: new Date(juego.release_date).toLocaleDateString('es-ES'),
-            anio: new Date(juego.release_date).getFullYear(),
-        });
-    } catch (err) {
-        console.error('Error en /api/juegos/:id:', err.message);
-        res.status(500).json({ error: 'Error al obtener el juego' });
-    }
-});
-
-app.get('/api/juegos/genero/:nombre', async (req, res) => {
-    const { nombre } = req.params;
-    const { orden = 'nombre' } = req.query;
-
-    try {
-        const { juegos, generos, developers } = await cargarDatosBase();
-        const resultado = juegos
-            .map((juego) => enriquecerJuego(juego, generos, developers))
-            .filter((juego) => juego.genre.toLowerCase() === nombre.toLowerCase());
-
-        res.json(ordenarJuegos(resultado, orden));
-    } catch (err) {
-        console.error('Error en /api/juegos/genero:', err.message);
-        res.status(500).json({ error: 'Error al filtrar por genero' });
-    }
-});
-
+// Buscar juegos
 app.get('/api/buscar', async (req, res) => {
-    const { q, genero = 'todos', orden = 'nombre' } = req.query;
+    const q = req.query.q;
+    if (!q) return res.status(400).json({ error: 'Falta busqueda' });
 
-    if (!q || q.trim() === '') {
-        return res.status(400).json({ error: 'Introduce un termino de busqueda' });
-    }
+    const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
+    const juegos = [];
+    const palabra = q.toLowerCase();
 
-    try {
-        const termino = q.trim().toLowerCase();
-        const { juegos: juegosBase, generos, developers } = await cargarDatosBase();
-        let juegos = juegosBase
-            .map((juego) => enriquecerJuego(juego, generos, developers))
-            .filter((juego) =>
-                juego.name.toLowerCase().includes(termino) ||
-                juego.description.toLowerCase().includes(termino) ||
-                juego.genre.toLowerCase().includes(termino) ||
-                juego.developer.toLowerCase().includes(termino)
-            );
-
-        if (genero !== 'todos') {
-            juegos = juegos.filter((juego) => juego.genre.toLowerCase() === genero.toLowerCase());
+    for (let i = 0; i < result.rows.length; i++) {
+        const j = result.rows[i];
+        if (j.name.toLowerCase().includes(palabra) || j.description.toLowerCase().includes(palabra) || j.genre.toLowerCase().includes(palabra)) {
+            juegos.push(j);
         }
-
-        res.json(ordenarJuegos(juegos, orden));
-    } catch (err) {
-        console.error('Error en /api/buscar', err.message);
-        res.status(500).json({ error: 'Error en la busqueda' });
     }
+    res.json(juegos);
 });
 
+// Login de admin
 app.post('/api/login', (req, res) => {
-    const { usuario, password } = req.body;
-
-    if (!usuario || !password) {
-        return res.status(400).json({ error: 'Falta usuario y contrasena' });
-    }
+    const usuario = req.body.usuario;
+    const password = req.body.password;
 
     if (password === process.env.ADMIN_PASSWORD && usuario === process.env.ADMIN_NAME) {
         res.json({ success: true, admin: true });
     } else {
-        res.status(401).json({ success: false, admin: false, error: 'Contrasena incorrecta' });
+        res.json({ success: false, admin: false, error: 'Incorrecto' });
     }
 });
 
+// Insertar juego nuevo
 app.post('/api/insert', async (req, res) => {
-    
+    const nombre = req.body.name;
+    const descripcion = req.body.description;
+    const duracion = req.body.duration;
+    const fecha = req.body.release_date;
+    const precio = req.body.price;
+    const genero_nombre = req.body.genero;
+    const developer_nombre = req.body.developer;
+    const valoracion = req.body.valoration;
+    const imagen = req.body.image;
+
+    if (!nombre || !descripcion || !genero_nombre || !developer_nombre) {
+        return res.json({ success: false, error: 'Faltan datos' });
+    }
+
+    // Insertar genero si no existe
+    await pool.query(
+        'INSERT INTO genre (name) VALUES ($1) ON CONFLICT (name) DO NOTHING',
+        [genero_nombre]
+    );
+
+    // Obtener ID del genero
+    const generoResult = await pool.query('SELECT id FROM genre WHERE name = $1', [genero_nombre]);
+    const genero_id = generoResult.rows[0].id;
+
+    // Insertar developer si no existe (con todos los campos obligatorios)
+    await pool.query(
+        'INSERT INTO developer (name, description, year_fundation, country) VALUES ($1, $2, $3, $4) ON CONFLICT (name) DO NOTHING',
+        [developer_nombre, 'Descripcion no disponible', 2000, 'Desconocido']
+    );
+
+    // Obtener ID del developer
+    const developerResult = await pool.query('SELECT id FROM developer WHERE name = $1', [developer_nombre]);
+    const developer_id = developerResult.rows[0].id;
+
+    // Insertar el juego
+    await pool.query(
+        'SELECT insert_videogame($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+        [nombre, descripcion, duracion, fecha, precio, genero_id, developer_id, valoracion, imagen]
+    );
+    res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto: ${PORT}`);
-});
+app.listen(PORT, () => console.log('Servidor en puerto ' + PORT));

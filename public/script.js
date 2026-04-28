@@ -4,34 +4,19 @@ const inputUsuario = document.querySelector('#usuario');
 const inputPassword = document.querySelector('#password');
 const loginMsg = document.querySelector('#login-msg');
 const zonaPrivada = document.querySelector('#zona-privada');
-const formularioBusqueda = document.querySelector('.searchbar');
 const inputBusqueda = document.querySelector('#buscador');
 const selectorOrden = document.querySelector('#orden-juegos');
 
-if (loginDropdown) {
-    document.addEventListener('click', (event) => {
-        if (!loginDropdown.open) return;
-        if (loginDropdown.contains(event.target)) return;
-        loginDropdown.open = false;
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            loginDropdown.open = false;
-        }
-    });
-}
+document.addEventListener('click', (e) => {
+    if (loginDropdown?.open && !loginDropdown.contains(e.target)) loginDropdown.open = false;
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') loginDropdown.open = false;
+});
 
 const contenedor = document.querySelector('#contenedor-juegos');
 const botonesFiltro = document.querySelectorAll('.btn-filtro');
 let generoActual = 'todos';
-let debounceBusqueda;
-
-function actualizarZonaPrivada(esAdmin) {
-    if (!zonaPrivada) return;
-
-    zonaPrivada.classList.toggle('oculto', !esAdmin);
-}
 
 function pintarJuegos(juegos) {
     contenedor.innerHTML = '';
@@ -42,38 +27,39 @@ function pintarJuegos(juegos) {
     }
 
     juegos.forEach((juego) => {
-        contenedor.innerHTML += `<article class="game-card">
-                                <a class="game-card-link" href="juego.html?id=${juego.id}">
-                                    <div class="game-card-media">
-                                        <img src="${juego.image}" alt="${juego.name}">
-                                    </div>
+        contenedor.innerHTML += `
+    <article class="game-card">
+        <a class="game-card-link" href="juego.html?id=${juego.id}">
+        <div class="game-card-media">
+            <img src="${juego.image}" alt="${juego.name}">
+        </div>
 
-                                    <div class="game-card-body">
-                                        <div class="game-card-head">
-                                            <h4>${juego.name}</h4>
-                                        </div>
+        <div class="game-card-body">
+            <div class="game-card-head">
+                <h4>${juego.name}</h4>
+            </div>
 
-                                        <p class="game-card-meta">${juego.genre}</p>
-                                        <p class="game-card-text">${juego.description}</p>
+            <p class="game-card-meta">${juego.genre}</p>
+            <p class="game-card-text">${juego.description}</p>
 
-                                        <div class="game-card-tags">
-                                            <span>${juego.platform}</span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </article>`;
+            <div class="game-card-tags">
+                <span>${juego.platform}</span>
+            </div>
+        </div>
+        </a>
+    </article>`;
     });
 }
 
 async function cargarJuegos() {
-    const termino = inputBusqueda?.value.trim() || '';
-    const orden = selectorOrden?.value || 'nombre';
-    let url = `/api/juegos?orden=${encodeURIComponent(orden)}`;
+    const termino = inputBusqueda.value.trim();
+    const orden = selectorOrden.value.trim() || 'nombre';
+    let url = '/api/juegos?orden=' + encodeURIComponent(orden);
 
     if (termino !== '') {
-        url = `/api/buscar?q=${encodeURIComponent(termino)}&genero=${encodeURIComponent(generoActual)}&orden=${encodeURIComponent(orden)}`;
+        url = '/api/buscar?q=' + encodeURIComponent(termino) + '&genero=' + encodeURIComponent(generoActual);
     } else if (generoActual !== 'todos') {
-        url = `/api/juegos/genero/${encodeURIComponent(generoActual)}?orden=${encodeURIComponent(orden)}`;
+        url = '/api/juegos/genero/' + encodeURIComponent(generoActual) + '?orden=' + encodeURIComponent(orden);
     }
 
     try {
@@ -95,19 +81,9 @@ botonesFiltro.forEach((boton) => {
     });
 });
 
-if (formularioBusqueda) {
-    formularioBusqueda.addEventListener('submit', (event) => {
-        event.preventDefault();
-        cargarJuegos();
-    });
-}
-
 if (inputBusqueda) {
     inputBusqueda.addEventListener('input', () => {
-        clearTimeout(debounceBusqueda);
-        debounceBusqueda = setTimeout(() => {
-            cargarJuegos();
-        }, 250);
+        cargarJuegos();
     });
 }
 
@@ -119,9 +95,8 @@ if (loginForm) {
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const usuario = inputUsuario?.value.trim() || '';
-        const password = inputPassword?.value || '';
-
+        const usuario = inputUsuario.value.trim();
+        const password = inputPassword.value;
 
         const response = await fetch('/api/login', {
             method: 'POST',
@@ -135,18 +110,59 @@ if (loginForm) {
 
         if (data.success) {
             sessionStorage.setItem('admin', 'true');
-            actualizarZonaPrivada(true);
+            zonaPrivada.classList.toggle('oculto', false);
             loginMsg.textContent = 'Sesion iniciada como admin';
             loginForm.reset();
-            return;
+        } else {
+            sessionStorage.removeItem('admin');
+            zonaPrivada.classList.toggle('oculto', true);
+            loginMsg.textContent = data.error || 'Error al iniciar sesion';
         }
-
-        sessionStorage.removeItem('admin');
-        actualizarZonaPrivada(false);
-        loginMsg.textContent = data.error || 'Error al iniciar sesion';
     });
 }
 
-actualizarZonaPrivada(sessionStorage.getItem('admin') === 'true');
-
+zonaPrivada.classList.toggle('oculto', sessionStorage.getItem('admin') !== 'true');
 cargarJuegos();
+
+// Modal insertar
+const modalInsertar = document.querySelector('#form-add-juego');
+const btnAdmin = document.querySelector('#btn-admin');
+const btnCerrarModal = document.querySelector('#btn-cerrar-modal');
+
+btnAdmin?.addEventListener('click', () => modalInsertar.classList.toggle('oculto', false));
+btnCerrarModal?.addEventListener('click', () => {
+    modalInsertar.classList.toggle('oculto', true);
+    document.querySelector('#insert-form').reset();
+});
+
+document.querySelector('#insert-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const get = (id) => document.querySelector(id).value.trim();
+    const juego = {
+        name: get('#juego-nombre'),
+        description: get('#juego-descripcion'),
+        image: get('#juego-imagen'),
+        genero: get('#juego-genero'),
+        developer: get('#juego-developer'),
+        release_date: document.querySelector('#juego-fecha').value,
+        price: parseFloat(document.querySelector('#juego-precio').value) || null,
+        duration: parseInt(document.querySelector('#juego-duracion').value) || null,
+        valoration: parseInt(document.querySelector('#juego-valoracion').value) || null,
+    };
+
+    const res = await fetch('/api/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(juego),
+    });
+
+    const data = await res.json();
+    alert(data.success ? 'Juego anadido' : 'Error: ' + (data.error || ''));
+
+    if (data.success) {
+        modalInsertar.classList.toggle('oculto', true);
+        document.querySelector('#insert-form').reset();
+        cargarJuegos();
+    }
+});

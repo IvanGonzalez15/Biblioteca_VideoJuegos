@@ -171,7 +171,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.developer (
     id integer NOT NULL,
-    name character varying(100) NOT NULL,
+    name character varying(100) NOT NULL UNIQUE,
     description character varying(250) NOT NULL,
     year_fundation integer NOT NULL,
     country character varying(100) NOT NULL
@@ -197,7 +197,7 @@ ALTER FUNCTION public.getdevelopers() OWNER TO postgres;
 
 CREATE TABLE public.genre (
     id integer NOT NULL,
-    name character varying(100) NOT NULL
+    name character varying(100) NOT NULL UNIQUE
 );
 
 
@@ -220,7 +220,7 @@ ALTER FUNCTION public.getgenres() OWNER TO postgres;
 
 CREATE TABLE public.videogame (
     id integer NOT NULL,
-    name character varying(100) NOT NULL,
+    name character varying(100) NOT NULL UNIQUE,
     description character varying(250) NOT NULL,
     duration integer NOT NULL,
     release_date date NOT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE public.videogame (
     developer_id integer NOT NULL,
     valoration integer NOT NULL,
     image text,
-    game_add timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -245,6 +245,27 @@ CREATE FUNCTION public.getvideogames() RETURNS SETOF public.videogame
 
 
 ALTER FUNCTION public.getvideogames() OWNER TO postgres;
+
+-- Nueva función con JOIN para devolver datos completos sin necesidad de enriquecer en JS
+CREATE FUNCTION public.getvideogames_completo()
+RETURNS TABLE (
+    id integer,
+    name varchar(100),
+    description varchar(250),
+    genre varchar(50),
+    developer varchar(100),
+    image text,
+    release_date date
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT v.id, v.name, v.description, g.name, d.name, v.image, v.release_date
+    FROM videogame v
+    JOIN genre g ON v.genre_id = g.id
+    JOIN developer d ON v.developer_id = d.id;
+END;
+$$ LANGUAGE plpgsql;
 
 --
 -- Name: insert_videogame(character varying, character varying, integer, date, real, integer, integer, integer, text); Type: FUNCTION; Schema: public; Owner: postgres
@@ -407,7 +428,7 @@ COPY public.genre (id, name) FROM stdin;
 -- Data for Name: videogame; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.videogame (id, name, description, duration, release_date, price, genre_id, developer_id, valoration, image, game_add) FROM stdin;
+COPY public.videogame (id, name, description, duration, release_date, price, genre_id, developer_id, valoration, image, created_at) FROM stdin;
 61	The Legend of Zelda: Breath of the Wild	Exploracion de un vasto reino destruido con secretos, libertad y misterios antiguos por descubrir.	60	2017-03-03	59.99	2	1	10	https://media.rawg.io/media/resize/1280/-/games/cc1/cc196a5ad763955d6532cdba236f730c.jpg	2026-04-25 21:28:25.402012
 62	Super Mario Odyssey	Viaje por distintos mundos acompaâ”¬Ã±ando a Mario en una mision para rescatar a Peach.	12	2017-10-27	59.99	2	1	10	https://media.rawg.io/media/resize/1280/-/games/267/267bd0dbc496f52692487d07d014c061.jpg	2026-04-25 21:28:25.402012
 63	Mario Kart 8 Deluxe	Competiciones llenas de velocidad con personajes iconicos en circuitos llenos de sorpresas.	20	2017-04-28	49.99	15	1	9	https://media.rawg.io/media/resize/640/-/games/7df/7dfbdcb58a03fcddc68479454fc1f7de.jpg	2026-04-25 21:28:25.402012

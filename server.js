@@ -19,36 +19,41 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Ver todos los juegos
 app.get('/api/juegos', async (req, res) => {
-    const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
+    try {
+        const result = await pool.query('SELECT * FROM public.getvideogames_completo()');
 
-    const orden = req.query.orden;
-    const juegos = result.rows;
+        const orden = req.query.orden;
+        const juegos = result.rows;
 
-    if (orden === 'fecha') {
-        for (let i = 0; i < juegos.length; i++) {
-            for (let j = i + 1; j < juegos.length; j++) {
-                const fechaI = new Date(juegos[i].release_date);
-                const fechaJ = new Date(juegos[j].release_date);
-                if (fechaJ > fechaI) {
-                    const temp = juegos[i];
-                    juegos[i] = juegos[j];
-                    juegos[j] = temp;
+        if (orden === 'fecha') {
+            for (let i = 0; i < juegos.length; i++) {
+                for (let j = i + 1; j < juegos.length; j++) {
+                    const fechaI = new Date(juegos[i].release_date);
+                    const fechaJ = new Date(juegos[j].release_date);
+                    if (fechaJ > fechaI) {
+                        const temp = juegos[i];
+                        juegos[i] = juegos[j];
+                        juegos[j] = temp;
+                    }
+                }
+            }
+        } else {
+            for (let i = 0; i < juegos.length; i++) {
+                for (let j = i + 1; j < juegos.length; j++) {
+                    if (juegos[j].name < juegos[i].name) {
+                        const temp = juegos[i];
+                        juegos[i] = juegos[j];
+                        juegos[j] = temp;
+                    }
                 }
             }
         }
-    } else {
-        for (let i = 0; i < juegos.length; i++) {
-            for (let j = i + 1; j < juegos.length; j++) {
-                if (juegos[j].name < juegos[i].name) {
-                    const temp = juegos[i];
-                    juegos[i] = juegos[j];
-                    juegos[j] = temp;
-                }
-            }
-        }
+
+        res.json(juegos);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
-
-    res.json(juegos);
 });
 
 // Filtrar por género
@@ -95,20 +100,20 @@ app.get('/api/juegos/:id', async (req, res) => {
         año = fechaStr.split('-')[0];
     }
 
-  res.json({
-    id: juego.id,
-    name: juego.name,
-    description: juego.description,
-    genero: juego.genre,
-    desarrolladora: juego.developer,
-    image: juego.image,
-    plataforma: '',
-    fecha: fechaStr,
-    año: año,
-    precio: juego.price,
-    valoracion: juego.valoration,
-    duracion: juego.duration,
-  });
+    res.json({
+        id: juego.id,
+        name: juego.name,
+        description: juego.description,
+        genero: juego.genre,
+        desarrolladora: juego.developer,
+        image: juego.image,
+        plataforma: juego.plataform || '',
+        fecha: fechaStr,
+        año: año,
+        precio: juego.price,
+        valoracion: juego.valoration,
+        duracion: juego.duration,
+    });
 });
 
 // Buscar juegos

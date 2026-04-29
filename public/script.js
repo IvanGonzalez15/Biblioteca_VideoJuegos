@@ -49,7 +49,7 @@ function pintarJuegos(juegos) {
           <p class="game-card-text">${juego.description}</p>
 
           <div class="game-card-tags">
-            <span>${juego.platform}</span>
+            <span>${juego.plataform || ''}</span>
           </div>
         </div>
       </a>

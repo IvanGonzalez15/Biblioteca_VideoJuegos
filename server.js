@@ -95,17 +95,20 @@ app.get('/api/juegos/:id', async (req, res) => {
         año = fechaStr.split('-')[0];
     }
 
-    res.json({
-        id: juego.id,
-        name: juego.name,
-        description: juego.description,
-        genero: juego.genre,
-        desarrolladora: juego.developer,
-        image: juego.image,
-        plataforma: '',
-        fecha: fechaStr,
-        año: año,
-    });
+  res.json({
+    id: juego.id,
+    name: juego.name,
+    description: juego.description,
+    genero: juego.genre,
+    desarrolladora: juego.developer,
+    image: juego.image,
+    plataforma: '',
+    fecha: fechaStr,
+    año: año,
+    precio: juego.price,
+    valoracion: juego.valoration,
+    duracion: juego.duration,
+  });
 });
 
 // Buscar juegos

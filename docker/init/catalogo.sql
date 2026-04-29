@@ -255,12 +255,15 @@ RETURNS TABLE (
     genre varchar(50),
     developer varchar(100),
     image text,
-    release_date date
+    release_date date,
+    price real,
+    valoration integer,
+    duration integer
 )
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT v.id, v.name, v.description, g.name, d.name, v.image, v.release_date
+    SELECT v.id, v.name, v.description, g.name, d.name, v.image, v.release_date, v.price, v.valoration, v.duration
     FROM videogame v
     JOIN genre g ON v.genre_id = g.id
     JOIN developer d ON v.developer_id = d.id;

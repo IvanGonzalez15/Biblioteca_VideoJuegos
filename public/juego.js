@@ -25,11 +25,18 @@ async function cargarJuego() {
 		'<span class="tag">' + juego.plataforma + '</span>' +
 		'<span class="tag">' + juego.año + '</span>';
 
-	document.getElementById('juego-meta').innerHTML =
-		'<div class="meta-item"><span class="meta-label">Lanzamiento</span><strong>' + juego.fecha + '</strong></div>' +
-		'<div class="meta-item"><span class="meta-label">Genero</span><strong>' + juego.genero + '</strong></div>' +
-		'<div class="meta-item"><span class="meta-label">Desarrolladora</span><strong>' + juego.desarrolladora + '</strong></div>' +
-		'<div class="meta-item"><span class="meta-label">Plataformas</span><strong>' + juego.plataforma + '</strong></div>';
+  const precioStr = juego.precio ? juego.precio + ' EUR' : 'No disponible';
+  const duracionStr = juego.duracion ? juego.duracion + ' horas' : 'No disponible';
+  const valoracionStr = juego.valoracion ? juego.valoracion + '/10' : 'No disponible';
+
+  document.getElementById('juego-meta').innerHTML =
+    '<div class="meta-item"><span class="meta-label">Lanzamiento</span><strong>' + juego.fecha + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Genero</span><strong>' + juego.genero + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Desarrolladora</span><strong>' + juego.desarrolladora + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Plataformas</span><strong>' + juego.plataforma + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Precio</span><strong>' + precioStr + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Valoracion</span><strong>' + valoracionStr + '</strong></div>' +
+    '<div class="meta-item"><span class="meta-label">Duracion</span><strong>' + duracionStr + '</strong></div>';
 }
 
 cargarJuego();

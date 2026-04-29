@@ -28,31 +28,33 @@ function pintarJuegos(juegos) {
 
     const isAdmin = sessionStorage.getItem('admin') === 'true';
 
-    juegos.forEach((juego) => {
-        const btnBorrar = isAdmin ? `<button class="btn-borrar" data-id="${juego.id}">X</button>` : '';
-        contenedor.innerHTML += `
-        <article class="game-card">
-            <a class="game-card-link" href="juego.html?id=${juego.id}">
-                <div class="game-card-media">
-                    <img src="${juego.image}" alt="${juego.name}">
-                </div>
+  juegos.forEach((juego) => {
+    const btnBorrar = isAdmin ? `<button class="btn-borrar" data-id="${juego.id}">X</button>` : '';
+    const valoracionHtml = juego.valoration ? `<span class="game-card-rating">${juego.valoration}</span>` : '';
+    contenedor.innerHTML += `
+    <article class="game-card">
+      <a class="game-card-link" href="juego.html?id=${juego.id}">
+        <div class="game-card-media">
+          <img src="${juego.image}" alt="${juego.name}">
+          ${valoracionHtml}
+        </div>
 
-                <div class="game-card-body">
-                    <div class="game-card-head">
-                        <h4>${juego.name}</h4>
-                        ${btnBorrar}
-                    </div>
+        <div class="game-card-body">
+          <div class="game-card-head">
+            <h4>${juego.name}</h4>
+            ${btnBorrar}
+          </div>
 
-                    <p class="game-card-meta">${juego.genre}</p>
-                    <p class="game-card-text">${juego.description}</p>
+          <p class="game-card-meta">${juego.genre}</p>
+          <p class="game-card-text">${juego.description}</p>
 
-                <div class="game-card-tags">
-                    <span>${juego.platform}</span>
-                </div>
-                </div>
-            </a>
-        </article>`;
-    });
+          <div class="game-card-tags">
+            <span>${juego.platform}</span>
+          </div>
+        </div>
+      </a>
+    </article>`;
+  });
 }
 
 contenedor.addEventListener('click', async (e) => {

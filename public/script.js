@@ -169,6 +169,7 @@ document.querySelector('#insert-form')?.addEventListener('submit', async (e) => 
         price: parseFloat(document.querySelector('#juego-precio').value) || null,
         duration: parseInt(document.querySelector('#juego-duracion').value) || null,
         valoration: parseInt(document.querySelector('#juego-valoracion').value) || null,
+        plataform: get('#juego-plataform')
     };
 
     const res = await fetch('/api/insert', {

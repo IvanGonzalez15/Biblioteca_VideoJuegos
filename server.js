@@ -157,6 +157,7 @@ app.post('/api/insert', async (req, res) => {
     const developer_nombre = req.body.developer;
     const valoracion = req.body.valoration;
     const imagen = req.body.image;
+    const plataform = req.body.plataform;
 
     if (!nombre || !descripcion || !genero_nombre || !developer_nombre) {
         return res.json({ success: false, error: 'Faltan datos' });
@@ -184,8 +185,8 @@ app.post('/api/insert', async (req, res) => {
 
     // Insertar el juego
     await pool.query(
-        'SELECT insert_videogame($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-        [nombre, descripcion, duracion, fecha, precio, genero_id, developer_id, valoracion, imagen]
+        'SELECT insert_videogame($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+        [nombre, descripcion, duracion, fecha, precio, genero_id, developer_id, valoracion, imagen, plataform]
     );
     res.json({ success: true });
 });

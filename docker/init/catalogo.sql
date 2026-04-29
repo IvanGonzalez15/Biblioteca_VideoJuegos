@@ -244,12 +244,12 @@ $$ LANGUAGE plpgsql;
 -- Name: insert_videogame(character varying, character varying, integer, date, real, integer, integer, integer, text); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.insert_videogame(nombre character varying, descripcion character varying, duracion integer, fecha_salida date, precio real, id_genero integer, id_developer integer, valoracion integer, imagen text) RETURNS void
+CREATE FUNCTION public.insert_videogame(nombre character varying, descripcion character varying, duracion integer, fecha_salida date, precio real, id_genero integer, id_developer integer, valoracion integer, imagen text, plataform text) RETURNS void
     LANGUAGE plpgsql
-    AS $$ BEGIN INSERT INTO videogame(name, description, duration, release_date, price, genre_id, developer_id, valoration, image) VALUES(nombre, descripcion, duracion, fecha_salida, precio, id_genero, id_developer, valoracion, imagen); END; $$;
+    AS $$ BEGIN INSERT INTO videogame(name, description, duration, release_date, price, genre_id, developer_id, valoration, image, plataform) VALUES(nombre, descripcion, duracion, fecha_salida, precio, id_genero, id_developer, valoracion, imagen, plataform); END; $$;
 
 
-ALTER FUNCTION public.insert_videogame(nombre character varying, descripcion character varying, duracion integer, fecha_salida date, precio real, id_genero integer, id_developer integer, valoracion integer, imagen text) OWNER TO postgres;
+ALTER FUNCTION public.insert_videogame(nombre character varying, descripcion character varying, duracion integer, fecha_salida date, precio real, id_genero integer, id_developer integer, valoracion integer, imagen text, plataform text) OWNER TO postgres;
 
 --
 -- Name: set_timestamp(); Type: FUNCTION; Schema: public; Owner: postgres

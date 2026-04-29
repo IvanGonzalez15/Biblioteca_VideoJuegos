@@ -80,7 +80,7 @@ app.get('/api/juegos/:id', async (req, res) => {
 
     if (!juego) return res.status(404).json({ error: 'No encontrado' });
 
-    // Convertir release_date a string si es un objeto
+    // Convertir release_date a string si es un objeto por problemas de pg
     let fechaStr = '';
     if (juego.release_date) {
         if (typeof juego.release_date === 'string') {
@@ -179,6 +179,18 @@ app.post('/api/insert', async (req, res) => {
         'SELECT insert_videogame($1, $2, $3, $4, $5, $6, $7, $8, $9)',
         [nombre, descripcion, duracion, fecha, precio, genero_id, developer_id, valoracion, imagen]
     );
+    res.json({ success: true });
+});
+
+// Eliminar juego
+app.delete('/api/juegos/:id', async (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!id) {
+        return res.json({ success: false, error: 'ID invalido' });
+    }
+
+    await pool.query('DELETE FROM videogame WHERE id = $1', [id]);
     res.json({ success: true });
 });
 

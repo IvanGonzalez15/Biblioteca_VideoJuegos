@@ -978,3 +978,25 @@ code {
 .oculto {
     display: none;
 }
+
+.btn-borrar {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 80, 80, 0.8);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-borrar:hover {
+    background: rgba(255, 50, 50, 1);
+}
+
+.game-card-head {
+    position: relative;
+}
